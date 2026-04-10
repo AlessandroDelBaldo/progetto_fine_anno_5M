@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Ricette - Ricette App{% endblock %}
+
+{% block content %}
+    <h1>Ricette disponibili</h1>
+    <p class="muted">Sfoglia le ricette salvate. Clicca sul nome di una ricetta per vederne i dettagli completi e provarla a casa.</p>
+
+    {% if recipes|length == 0 %}
+    <div class="card">
+        <p>Nessuna ricetta presente. Usa il pulsante "Nuova ricetta" per aggiungerne una.</p>
+    </div>
+    {% else %}
+
+    <div class="grid">
+    {% for r in recipes %}
+        <article class="card">
+            <header>
+                <div class="recipe-card-title"><a href="{{ url_for('main.recipe_detail', id=r['id']) }}">{{ r['name'] }}</a></div>
+                <div class="recipe-meta">{{ r.get('type_name','') }} – {{ r.get('country','') }} {% if r.get('region') %}({{ r['region'] }}){% endif %} – {{ r.get('preparation_time_minutes','?') }} min</div>
+            </header>
+            <p class="muted">{{ r.get('instructions','')|truncate(140) }}</p>
+        </article>
+    {% endfor %}
+    </div>
+
+    {% endif %}
+
+{% endblock %}

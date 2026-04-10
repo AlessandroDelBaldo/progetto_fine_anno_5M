@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Crea Ricetta - Ricette App{% endblock %}
+
+{% block content %}
+    <h1>Crea una nuova ricetta</h1>
+    <p class="muted">Compila i campi principali e, se vuoi, aggiungi gli ingredienti con quantità (grammi, ml o pezzi). Puoi lasciare alcuni ingredienti vuoti se non necessari.</p>
+
+    <form method="post">
+        <label>Nome</label>
+        <input type="text" name="name" placeholder="Esempio: Tiramisu">
+
+        <div class="row">
+            <div class="col-2">
+                <label>Paese</label>
+                <input type="text" name="country" placeholder="Italia">
+            </div>
+            <div class="col-2">
+                <label>Regione</label>
+                <input type="text" name="region" placeholder="Lombardia">
+            </div>
+        </div>
+
+        <label>Tempo preparazione (minuti)</label>
+        <input type="number" name="preparation_time_minutes" min="0" placeholder="es. 30">
+
+        <label>Tipo di ricetta</label>
+        <select name="recipe_type_id">
+            <option value="">-- Seleziona --</option>
+            {% for t in types %}
+            <option value="{{ t['id'] }}">{{ t['name'] }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Istruzioni</label>
+        <textarea name="instructions" rows="6" placeholder="Passaggi per preparare la ricetta"></textarea>
+
+        <h3>Ingredienti (opzionale)</h3>
+        <p class="muted">Inserisci gli ingredienti con quantità. Lascia vuoti i campi non usati.</p>
+
+        {% for i in range(6) %}
+        <div class="row" style="margin-bottom:8px; align-items:center">
+            <div class="col-2">
+                <select name="ingredient_id">
+                    <option value="">-- Seleziona ingrediente --</option>
+                    {% for ing in ingredients %}
+                    <option value="{{ ing['id'] }}">{{ ing['name'] }} ({{ ing['default_unit'] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="width:110px">
+                <input type="text" name="quantity" placeholder="quantità">
+            </div>
+            <div style="width:110px">
+                <input type="text" name="unit" placeholder="unità (g, ml, pcs)">
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="margin-top:6px">
+            <button class="btn" type="submit">Crea ricetta</button>
+            <a class="btn secondary" href="{{ url_for('main.search_recipes') }}" style="margin-left:8px; background:#6b7280">Annulla</a>
+        </div>
+    </form>
+
+{% endblock %}

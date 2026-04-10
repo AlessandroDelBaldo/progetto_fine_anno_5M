@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Ricette App{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class="header-bar">
+        <div class="header-inner">
+            <div>
+                <div style="display:flex; align-items:center; gap:10px">
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="logo" style="height:36px; width:36px;">
+                    <div>
+                        <a class="site-title" href="/">Ricette</a>
+                        <div class="site-sub">Ricette fatte in casa • veloci e gustose</div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <a href="/recipes">Elenco</a>
+                <a class="btn" href="/recipes/create">Nuova ricetta</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Flash messages -->
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %}
+    </div>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">&copy; 2026 Ricette App</footer>
+</body>
+
+</html>
