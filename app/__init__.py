@@ -15,7 +15,7 @@ def create_app():
         # 'dev' va bene per sviluppare, ma in produzione andrà cambiata.
         SECRET_KEY="dev",
         # Diciamo a Flask dove salvare il file del database SQLite
-        DATABASE=os.path.join(app.instance_path, "schema.sqlite"),
+        DATABASE=os.path.join(app.instance_path, "cocktails.sqlite"),
     )
     # Assicuriamoci che la cartella instance esista (necessaria per il DB)
     try:

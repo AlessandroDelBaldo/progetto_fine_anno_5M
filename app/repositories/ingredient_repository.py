@@ -7,7 +7,7 @@ def get_all_ingredients():
     """
     db = get_db()
     query = """
-        SELECT id, name, default_unit
+        SELECT id, name, default_unit, image_url
         FROM ingredients
         ORDER BY name
     """

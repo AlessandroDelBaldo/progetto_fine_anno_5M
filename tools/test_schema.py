@@ -3,7 +3,7 @@ import sqlite3
 
 repo_root = Path(__file__).resolve().parents[1]
 schema_path = repo_root / 'app' / 'schema.sql'
-db_path = repo_root / 'test_recipes.db'
+db_path = repo_root / 'test_cocktails.db'
 
 # Remove existing test DB if present
 if db_path.exists():
@@ -26,10 +26,10 @@ def q(qs, params=()):
     for r in rows:
         print(dict(r))
 
-q('SELECT id, name, description FROM recipe_types')
-q('SELECT id, name, default_unit FROM ingredients')
-q('SELECT id, name, country, region, preparation_time_minutes, recipe_type_id, instructions FROM recipes')
-q("SELECT ri.recipe_id, i.name as ingredient_name, ri.quantity, ri.unit FROM recipe_ingredients ri JOIN ingredients i ON i.id = ri.ingredient_id")
+q('SELECT id, name, description FROM cocktail_types')
+q('SELECT id, name, default_unit, image_url FROM ingredients')
+q('SELECT id, name, country, region, preparation_time_minutes, cocktail_type_id, instructions, image_url FROM cocktails')
+q("SELECT ci.cocktail_id, i.name as ingredient_name, ci.quantity, ci.unit FROM cocktail_ingredients ci JOIN ingredients i ON i.id = ci.ingredient_id")
 
 conn.close()
 print('\nTest DB created at', db_path)

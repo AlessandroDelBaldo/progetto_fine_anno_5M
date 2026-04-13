@@ -7,7 +7,7 @@ from app import create_app
 app = create_app()
 
 with app.test_client() as client:
-    for path in ['/', '/recipes', '/recipes/create', '/recipes/1']:
+    for path in ['/', '/cocktails', '/cocktails/create', '/cocktails/1']:
         print('\n=== REQUEST', path)
         try:
             resp = client.get(path)

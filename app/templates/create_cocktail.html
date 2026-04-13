@@ -1,31 +1,31 @@
 {% extends 'base.html' %}
 
-{% block title %}Crea Ricetta - Ricette App{% endblock %}
+{% block title %}Crea Cocktail - App Cocktail{% endblock %}
 
 {% block content %}
-    <h1>Crea una nuova ricetta</h1>
+    <h1>Crea un nuovo cocktail</h1>
     <p class="muted">Compila i campi principali e, se vuoi, aggiungi gli ingredienti con quantità (grammi, ml o pezzi). Puoi lasciare alcuni ingredienti vuoti se non necessari.</p>
 
     <form method="post">
         <label>Nome</label>
-        <input type="text" name="name" placeholder="Esempio: Tiramisu">
+        <input type="text" name="name" placeholder="Esempio: Mojito">
 
         <div class="row">
             <div class="col-2">
                 <label>Paese</label>
-                <input type="text" name="country" placeholder="Italia">
+                <input type="text" name="country" placeholder="Es. Cuba">
             </div>
             <div class="col-2">
                 <label>Regione</label>
-                <input type="text" name="region" placeholder="Lombardia">
+                <input type="text" name="region" placeholder="Es. L'Avana">
             </div>
         </div>
 
         <label>Tempo preparazione (minuti)</label>
-        <input type="number" name="preparation_time_minutes" min="0" placeholder="es. 30">
+        <input type="number" name="preparation_time_minutes" min="0" placeholder="Es. 5">
 
-        <label>Tipo di ricetta</label>
-        <select name="recipe_type_id">
+        <label>Tipo di cocktail</label>
+        <select name="cocktail_type_id">
             <option value="">-- Seleziona --</option>
             {% for t in types %}
             <option value="{{ t['id'] }}">{{ t['name'] }}</option>
@@ -33,13 +33,16 @@
         </select>
 
         <label>Istruzioni</label>
-        <textarea name="instructions" rows="6" placeholder="Passaggi per preparare la ricetta"></textarea>
+        <textarea name="instructions" rows="6" placeholder="Passaggi per preparare il cocktail"></textarea>
+
+        <label>URL immagine del cocktail</label>
+        <input type="url" name="image_url" placeholder="https://example.com/image.jpg">
 
         <h3>Ingredienti (opzionale)</h3>
         <p class="muted">Inserisci gli ingredienti con quantità. Lascia vuoti i campi non usati.</p>
 
         {% for i in range(6) %}
-        <div class="row" style="margin-bottom:8px; align-items:center">
+        <div class="form-row ingredient-row">
             <div class="col-2">
                 <select name="ingredient_id">
                     <option value="">-- Seleziona ingrediente --</option>
@@ -48,18 +51,18 @@
                     {% endfor %}
                 </select>
             </div>
-            <div style="width:110px">
-                <input type="text" name="quantity" placeholder="quantità">
+            <div class="quantity-input">
+                <input type="text" name="quantity" placeholder="Quantità">
             </div>
-            <div style="width:110px">
-                <input type="text" name="unit" placeholder="unità (g, ml, pcs)">
+            <div class="unit-input">
+                <input type="text" name="unit" placeholder="Unità (g, ml, pz)">
             </div>
         </div>
         {% endfor %}
 
         <div style="margin-top:6px">
-            <button class="btn" type="submit">Crea ricetta</button>
-            <a class="btn secondary" href="{{ url_for('main.search_recipes') }}" style="margin-left:8px; background:#6b7280">Annulla</a>
+            <button class="btn" type="submit">Crea cocktail</button>
+            <a class="btn secondary" href="{{ url_for('main.search_cocktails') }}" style="margin-left:8px; background:#6b7280">Annulla</a>
         </div>
     </form>
 

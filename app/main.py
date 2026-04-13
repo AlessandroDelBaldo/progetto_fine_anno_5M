@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from app.repositories import recipe_repository, ingredient_repository, recipe_type_repository
+from app.repositories import cocktail_repository, ingredient_repository, cocktail_type_repository
 
 # Usiamo 'main' perché è il blueprint principale del sito
 bp = Blueprint("main", __name__)
@@ -7,49 +7,67 @@ bp = Blueprint("main", __name__)
 
 @bp.route("/")
 def index():
-    # Mostra direttamente la lista delle ricette (landing principale)
-    recipes = recipe_repository.get_all_recipes()
-    types = {t['id']: t['name'] for t in recipe_type_repository.get_all_recipe_types()}
-    for r in recipes:
-        r['type_name'] = types.get(r.get('recipe_type_id'))
-    return render_template('recipes_list.html', recipes=recipes)
+    # Mostra direttamente la lista dei cocktail (landing principale)
+    cocktails = cocktail_repository.get_all_cocktails()
+    types = {t['id']: t['name'] for t in cocktail_type_repository.get_all_cocktail_types()}
+    for c in cocktails:
+        c['type_name'] = types.get(c.get('cocktail_type_id'))
+    return render_template('home.html', cocktails=cocktails, search_query=None)
 
 
-@bp.route('/recipes')
-def search_recipes():
-    """Lista tutte le ricette disponibili."""
-    recipes = recipe_repository.get_all_recipes()
-    # arricchisci con tipo di ricetta (nome)
-    types = {t['id']: t['name'] for t in recipe_type_repository.get_all_recipe_types()}
-    for r in recipes:
-        r['type_name'] = types.get(r.get('recipe_type_id'))
-    return render_template('recipes_list.html', recipes=recipes)
+@bp.route('/search')
+def search_page():
+    """Pagina di ricerca dei cocktail."""
+    search_query = request.args.get('q', '').strip()
+    
+    if search_query:
+        cocktails = cocktail_repository.search_cocktails(search_query)
+    else:
+        cocktails = cocktail_repository.get_all_cocktails()
+    
+    # Arricchisci con tipo di cocktail (nome)
+    types = {t['id']: t['name'] for t in cocktail_type_repository.get_all_cocktail_types()}
+    for c in cocktails:
+        c['type_name'] = types.get(c.get('cocktail_type_id'))
+    
+    return render_template('home.html', cocktails=cocktails, search_query=search_query)
 
 
-@bp.route('/recipes/<int:id>')
-def recipe_detail(id):
-    """Mostra i dettagli di una singola ricetta."""
-    recipe = recipe_repository.get_recipe_by_id(id)
-    if recipe is None:
+@bp.route('/cocktails')
+def search_cocktails():
+    """Lista tutti i cocktail disponibili."""
+    cocktails = cocktail_repository.get_all_cocktails()
+    # arricchisci con tipo di cocktail (nome)
+    types = {t['id']: t['name'] for t in cocktail_type_repository.get_all_cocktail_types()}
+    for c in cocktails:
+        c['type_name'] = types.get(c.get('cocktail_type_id'))
+    return render_template('cocktails_list.html', cocktails=cocktails)
+
+
+@bp.route('/cocktails/<int:id>')
+def cocktail_detail(id):
+    """Mostra i dettagli di un singolo cocktail."""
+    cocktail = cocktail_repository.get_cocktail_by_id(id)
+    if cocktail is None:
         from werkzeug.exceptions import abort
-        abort(404, "Ricetta non trovata.")
+        abort(404, "Cocktail non trovato.")
 
     # aggiungi nome tipo
     type_obj = None
-    if recipe.get('recipe_type_id'):
-        types = recipe_type_repository.get_all_recipe_types()
+    if cocktail.get('cocktail_type_id'):
+        types = cocktail_type_repository.get_all_cocktail_types()
         for t in types:
-            if t['id'] == recipe['recipe_type_id']:
+            if t['id'] == cocktail['cocktail_type_id']:
                 type_obj = t
                 break
 
-    return render_template('recipe_detail.html', recipe=recipe, type=type_obj)
+    return render_template('cocktail_detail.html', cocktail=cocktail, type=type_obj)
 
 
-@bp.route('/recipes/create', methods=('GET', 'POST'))
-def create_recipe():
-    """Crea una nuova ricetta; può ricevere ingredienti multipli tramite campi ripetuti."""
-    types = recipe_type_repository.get_all_recipe_types()
+@bp.route('/cocktails/create', methods=('GET', 'POST'))
+def create_cocktail():
+    """Crea un nuovo cocktail; può ricevere ingredienti multipli tramite campi ripetuti."""
+    types = cocktail_type_repository.get_all_cocktail_types()
     ingredients = ingredient_repository.get_all_ingredients()
 
     if request.method == 'POST':
@@ -57,8 +75,9 @@ def create_recipe():
         country = request.form.get('country')
         region = request.form.get('region')
         preparation_time_minutes = request.form.get('preparation_time_minutes', type=int)
-        recipe_type_id = request.form.get('recipe_type_id', type=int)
+        cocktail_type_id = request.form.get('cocktail_type_id', type=int)
         instructions = request.form.get('instructions')
+        image_url = request.form.get('image_url')
 
         error = None
         if not name:
@@ -80,10 +99,10 @@ def create_recipe():
                     continue
                 ing_list.append({'ingredient_id': iid_i, 'quantity': q_f, 'unit': u or None})
 
-            recipe_id = recipe_repository.create_recipe(
-                name, country, region, preparation_time_minutes, recipe_type_id, instructions, ingredients=ing_list
+            cocktail_id = cocktail_repository.create_cocktail(
+                name, country, region, preparation_time_minutes, cocktail_type_id, instructions, image_url=image_url, ingredients=ing_list
             )
-            return redirect(url_for('main.search_recipes'))
+            return redirect(url_for('main.search_cocktails'))
 
-    return render_template('create_recipe.html', types=types, ingredients=ingredients)
+    return render_template('create_cocktail.html', types=types, ingredients=ingredients)
 

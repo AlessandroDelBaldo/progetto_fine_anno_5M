@@ -15,7 +15,7 @@ def main():
     db_path = app.config.get('DATABASE')
     if not db_path:
         # fallback: file nella instance
-        db_path = os.path.join(instance_path, 'recipes.sqlite')
+        db_path = os.path.join(instance_path, 'cocktails.sqlite')
 
     # Leggiamo lo schema dal file corretto
     schema_path = os.path.join(os.path.dirname(__file__), 'app', 'schema.sql')

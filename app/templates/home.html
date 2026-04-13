@@ -1,13 +1,53 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Ricette App{% endblock %}
+{% block title %}Home - App Cocktail{% endblock %}
 
 {% block content %}
-<h1>Benvenuto in Ricette App</h1>
-<p>Questa applicazione permette di gestire ricette: puoi consultare le ricette esistenti, crearne di nuove e associare ingredienti con quantità (grammi o ml).</p>
+<h1>Benvenuto in App Cocktail</h1>
+<p>Questa applicazione permette di gestire cocktail: puoi consultare i cocktail esistenti, crearne di nuovi e associare ingredienti con quantità (grammi o ml).</p>
 <ul>
-    <li><strong>Consulta le ricette</strong>: visualizza la lista completa e i dettagli di ogni ricetta.</li>
-    <li><strong>Crea ricette</strong>: aggiungi nome, provenienza, tempo di preparazione, tipo e ingredienti.</li>
+    <li><strong>Consulta i cocktail</strong>: visualizza la lista completa e i dettagli di ogni cocktail.</li>
+    <li><strong>Crea cocktail</strong>: aggiungi nome, provenienza, tempo di preparazione, tipo e ingredienti.</li>
 </ul>
 <p>Usa la navigazione in alto per iniziare.</p>
+
+<hr class="section-divider">
+
+<h2>Cocktail disponibili</h2>
+
+<div class="search-box">
+    <form method="GET" action="{{ url_for('main.search_page') }}">
+        <input type="text" name="q" placeholder="Cerca per nome cocktail o ingrediente..." value="{{ search_query or '' }}">
+        <button type="submit" class="btn">Cerca</button>
+        {% if search_query %}
+        <a href="{{ url_for('main.index') }}" class="btn secondary">Cancella</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if search_query %}
+<p class="muted">Risultati della ricerca per: <strong>{{ search_query }}</strong></p>
+{% endif %}
+
+<div class="grid">
+{% if cocktails|length == 0 %}
+    <div class="card">
+        <p>{% if search_query %}Nessun cocktail trovato con questa ricerca.{% else %}Nessun cocktail disponibile.{% endif %}</p>
+    </div>
+{% else %}
+    {% for c in cocktails %}
+    <article class="card">
+        <header>
+            {% if c.get('image_url') %}
+            <img src="{{ c['image_url'] }}" alt="{{ c['name'] }}" class="cocktail-preview-image">
+            {% endif %}
+            <div class="cocktail-card-title"><a href="{{ url_for('main.cocktail_detail', id=c['id']) }}">{{ c['name'] }}</a></div>
+            <div class="cocktail-meta">{{ c.get('type_name','') }} – {{ c.get('country','') }} {% if c.get('region') %}({{ c['region'] }}){% endif %} – {{ c.get('preparation_time_minutes','?') }} min</div>
+        </header>
+        <p class="muted">{{ c.get('instructions','')|truncate(140) }}</p>
+    </article>
+    {% endfor %}
+{% endif %}
+</div>
+
 {% endblock %}
