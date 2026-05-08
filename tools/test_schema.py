@@ -3,9 +3,10 @@ import sqlite3
 
 repo_root = Path(__file__).resolve().parents[1]
 schema_path = repo_root / 'app' / 'schema.sql'
-db_path = repo_root / 'test_cocktails.db'
+instance_dir = repo_root / 'instance'
+instance_dir.mkdir(exist_ok=True)
+db_path = instance_dir / 'test_cocktails.db'
 
-# Remove existing test DB if present
 if db_path.exists():
     db_path.unlink()
 

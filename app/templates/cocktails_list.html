@@ -1,32 +1,40 @@
 {% extends 'base.html' %}
 
-{% block title %}Cocktail - Cocktail App{% endblock %}
+{% block title %}Cocktail - App Cocktail{% endblock %}
 
 {% block content %}
-    <h1>Cocktail disponibili</h1>
-    <p class="muted">Sfoglia i cocktail salvati. Clicca sul nome di un cocktail per vederne i dettagli completi e provarlo a casa.</p>
+<h1>Cocktail disponibili</h1>
+<p class="muted">Sfoglia i cocktail salvati. Clicca sul nome per vederne i dettagli.</p>
 
-    {% if cocktails|length == 0 %}
-    <div class="card">
-        <p>Nessun cocktail presente. Usa il pulsante "Nuovo cocktail" per aggiungerne uno.</p>
-    </div>
-    {% else %}
-
-    <div class="grid">
-    {% for c in cocktails %}
-        <article class="card">
-            <header>
-                {% if c.get('image_url') %}
-                <img src="{{ c['image_url'] }}" alt="{{ c['name'] }}" class="cocktail-preview-image">
-                {% endif %}
-                <div class="cocktail-card-title"><a href="{{ url_for('main.cocktail_detail', id=c['id']) }}">{{ c['name'] }}</a></div>
-                <div class="cocktail-meta">{{ c.get('type_name','') }} – {{ c.get('country','') }} {% if c.get('region') %}({{ c['region'] }}){% endif %} – {{ c.get('preparation_time_minutes','?') }} min</div>
-            </header>
-            <p class="muted">{{ c.get('instructions','')|truncate(140) }}</p>
-        </article>
-    {% endfor %}
-    </div>
-
+{% if cocktails|length == 0 %}
+<div class="card">
+  <p>Nessun cocktail presente. Usa il pulsante "Nuovo cocktail" per aggiungerne uno.</p>
+</div>
+{% else %}
+<div class="grid">
+  {% for c in cocktails %}
+  <article class="card cocktail-card">
+    {% if c.get('image_url') %}
+    <img src="{{ c['image_url'] }}" alt="{{ c['name'] }}" class="cocktail-preview-image">
     {% endif %}
-
+    <div class="cocktail-card-body">
+      <div class="cocktail-card-title">
+        <a href="{{ url_for('main.cocktail_detail', id=c['id']) }}">{{ c['name'] }}</a>
+      </div>
+      <div class="cocktail-meta">{{ c.get('type_name','') }}{% if c.get('country') %} · {{ c['country'] }}{% endif %}{% if c.get('preparation_time_minutes') %} · {{ c['preparation_time_minutes'] }} min{% endif %}</div>
+      <p class="muted card-preview">{{ c.get('instructions','')|truncate(110) }}</p>
+    </div>
+    {% if current_user %}
+    <form method="post" action="{{ url_for('main.toggle_favorite', id=c['id']) }}" class="star-form">
+      <input type="hidden" name="next" value="{{ request.url }}">
+      <button type="submit" class="star-btn {% if c['id'] in favorite_ids %}is-fav{% endif %}"
+              title="{{ 'Rimuovi dai preferiti' if c['id'] in favorite_ids else 'Aggiungi ai preferiti' }}">
+        {{ '★' if c['id'] in favorite_ids else '☆' }}
+      </button>
+    </form>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

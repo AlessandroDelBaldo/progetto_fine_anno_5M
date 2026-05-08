@@ -13,3 +13,37 @@ Il percorso file dell'applicazione segue la seguente struttura:
 - `instance/`: contiene il database SQLite e i file di configurazione dell'applicazione
 
 L'applicazione utilizza l'API di TheCocktailDB per recuperare i dati sui cocktail. L'API offre endpoint per la ricerca di cocktail per nome, per lettera, per ingrediente e per ID.
+
+## Come avviare l'applicazione
+
+### 1. Installa le dipendenze
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Crea il database
+
+Esegui lo script dalla root del progetto per creare le tabelle e inserire i dati di esempio:
+
+```bash
+python tools/setup_db.py
+```
+
+### 3. Popola il database dall'API
+
+Per importare tutti i cocktail da TheCocktailDB (richiede connessione internet):
+
+```bash
+python tools/populate_from_api.py
+```
+
+### 4. Avvia il server
+
+```bash
+python run.py
+```
+
+L'applicazione sarà disponibile su [http://127.0.0.1:5001](http://127.0.0.1:5001).
+
+> Per cambiare host o porta, imposta le variabili d'ambiente `FLASK_RUN_HOST` e `FLASK_RUN_PORT` prima di avviare.

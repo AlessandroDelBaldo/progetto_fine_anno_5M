@@ -23,15 +23,22 @@
             </div>
             <nav>
                 <a href="/cocktails">Elenco</a>
-                <a class="btn" href="/cocktails/create">Nuovo cocktail</a>
+                {% if current_user %}
+                    <a href="{{ url_for('main.favorites') }}">⭐ Preferiti</a>
+                    <a class="btn" href="{{ url_for('main.create_cocktail') }}">Nuovo cocktail</a>
+                    <span class="nav-user">{{ current_user['username'] }}</span>
+                    <a class="btn secondary" href="{{ url_for('auth.logout') }}">Esci</a>
+                {% else %}
+                    <a class="btn secondary" href="{{ url_for('auth.register') }}">Registrati</a>
+                    <a class="btn" href="{{ url_for('auth.login') }}">Accedi</a>
+                {% endif %}
             </nav>
         </div>
     </header>
 
-    <!-- Flash messages -->
     <div class="container">
-        {% for message in get_flashed_messages() %}
-        <div class="flash">{{ message }}</div>
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
         {% endfor %}
     </div>
 

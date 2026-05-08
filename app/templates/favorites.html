@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}I miei preferiti - App Cocktail{% endblock %}
+
+{% block content %}
+<div class="favorites-header">
+  <h1>⭐ I miei preferiti</h1>
+  <p class="muted">I cocktail che hai salvato. Clicca sulla stellina per rimuoverli.</p>
+</div>
+
+{% if cocktails|length == 0 %}
+<div class="card favorites-empty">
+  <div class="favorites-empty-icon">☆</div>
+  <h2>Nessun preferito ancora</h2>
+  <p class="muted">Sfoglia i cocktail e clicca la stellina ☆ per salvarli qui.</p>
+  <a class="btn" href="{{ url_for('main.search_cocktails') }}">Sfoglia i cocktail</a>
+</div>
+
+{% else %}
+<div class="grid">
+  {% for c in cocktails %}
+  <article class="card cocktail-card">
+    {% if c.get('image_url') %}
+    <img src="{{ c['image_url'] }}" alt="{{ c['name'] }}" class="cocktail-preview-image">
+    {% endif %}
+    <div class="cocktail-card-body">
+      <div class="cocktail-card-title">
+        <a href="{{ url_for('main.cocktail_detail', id=c['id']) }}">{{ c['name'] }}</a>
+      </div>
+      <div class="cocktail-meta">
+        {{ c.get('type_name','') }}
+        {% if c.get('country') %} · {{ c['country'] }}{% endif %}
+        {% if c.get('preparation_time_minutes') %} · {{ c['preparation_time_minutes'] }} min{% endif %}
+      </div>
+      <p class="muted card-preview">{{ c.get('instructions','')|truncate(110) }}</p>
+    </div>
+    <form method="post" action="{{ url_for('main.toggle_favorite', id=c['id']) }}" class="star-form">
+      <input type="hidden" name="next" value="{{ request.url }}">
+      <button type="submit" class="star-btn is-fav" title="Rimuovi dai preferiti">★</button>
+    </form>
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

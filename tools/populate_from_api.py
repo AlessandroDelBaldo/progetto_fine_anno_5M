@@ -103,7 +103,7 @@ def insert_cocktails(db, cocktails):
             if abv:
                 try:
                     abv_value = float(abv.replace('%', ''))
-                except:
+                except ValueError:
                     abv_value = None
             
             # Ottieni il tipo di cocktail
@@ -137,7 +137,7 @@ def insert_cocktails(db, cocktails):
                                 quantity = float(parts[0])
                                 if len(parts) > 1:
                                     unit = " ".join(parts[1:])
-                            except:
+                            except ValueError:
                                 quantity = 1.0
                     
                     db.execute(

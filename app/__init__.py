@@ -1,35 +1,37 @@
 import os
-from flask import Flask
+from flask import Flask, session
 
 
 def create_app():
-    # 1. Creiamo l'istanza di Flask
-    # instance_relative_config=True dice a Flask:
-    # "Cerca la cartella 'instance' fuori da 'app', non dentro."
     app = Flask(__name__, instance_relative_config=True)
 
-    # 2. Configurazione di base
-    # Qui impostiamo le variabili fondamentali.
     app.config.from_mapping(
-        # SECRET_KEY serve a Flask per firmare i dati sicuri (es. sessioni).
-        # 'dev' va bene per sviluppare, ma in produzione andrà cambiata.
-        SECRET_KEY="dev",
-        # Diciamo a Flask dove salvare il file del database SQLite
-        DATABASE=os.path.join(app.instance_path, "cocktails.sqlite"),
+        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
+        DATABASE=os.path.join(app.instance_path, 'cocktails.sqlite'),
+        MAIL_SMTP_HOST=os.environ.get('MAIL_SMTP_HOST', 'smtp.gmail.com'),
+        MAIL_SMTP_PORT=os.environ.get('MAIL_SMTP_PORT', '587'),
+        MAIL_SMTP_USER=os.environ.get('MAIL_SMTP_USER', ''),
+        MAIL_SMTP_PASS=os.environ.get('MAIL_SMTP_PASS', ''),
+        MAIL_SENDER=os.environ.get('MAIL_SENDER', ''),
     )
-    # Assicuriamoci che la cartella instance esista (necessaria per il DB)
-    try:
-        os.makedirs(app.instance_path, exist_ok=True)
-    except Exception:
-        # se non riusciamo a creare la cartella, lasciamo che l'errore emerga più avanti
-        pass
+
+    os.makedirs(app.instance_path, exist_ok=True)
 
     from . import db
     db.init_app(app)
 
-    # --- REGISTRAZIONE BLUEPRINTS ---
-    from . import main
-
+    from . import auth, main
     app.register_blueprint(main.bp)
+    app.register_blueprint(auth.bp)
+
+    @app.context_processor
+    def inject_user_context():
+        from app.repositories import favorite_repository, user_repository
+        user_id = session.get('user_id')
+        if user_id:
+            user = user_repository.get_user_by_id(user_id)
+            fav_ids = favorite_repository.get_favorite_ids(user_id)
+            return {'current_user': user, 'favorite_ids': fav_ids}
+        return {'current_user': None, 'favorite_ids': set()}
 
     return app

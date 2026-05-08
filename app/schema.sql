@@ -6,10 +6,22 @@
 -- - costo calcolato come somma(quantity * cost_per_unit) tramite VIEW
 -- ############################################################
 
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS cocktail_ingredients;
 DROP TABLE IF EXISTS cocktails;
 DROP TABLE IF EXISTS ingredients;
 DROP TABLE IF EXISTS cocktail_types;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL UNIQUE,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  reset_token TEXT,
+  reset_token_expires REAL
+);
 
 CREATE TABLE cocktail_types (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,5 +87,23 @@ INSERT INTO cocktail_ingredients (cocktail_id, ingredient_id, quantity, unit) VA
 INSERT INTO cocktail_ingredients (cocktail_id, ingredient_id, quantity, unit) VALUES (1, 2, 20, 'ml');
 INSERT INTO cocktail_ingredients (cocktail_id, ingredient_id, quantity, unit) VALUES (1, 3, 10, 'g');
 INSERT INTO cocktail_ingredients (cocktail_id, ingredient_id, quantity, unit) VALUES (1, 4, 5, 'pcs');
+
+CREATE TABLE favorites (
+  user_id INTEGER NOT NULL,
+  cocktail_id INTEGER NOT NULL,
+  PRIMARY KEY (user_id, cocktail_id),
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (cocktail_id) REFERENCES cocktails (id) ON DELETE CASCADE
+);
+
+CREATE TABLE comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cocktail_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (cocktail_id) REFERENCES cocktails (id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users (id)
+);
 
 -- Fine schema cocktail
