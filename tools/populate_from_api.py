@@ -55,7 +55,7 @@ def get_or_create_ingredient(db, name, unit="ml"):
 
 def fetch_cocktails():
     """Recupera i cocktail da TheCocktailDB."""
-    print("🍹 Recuperando cocktail da TheCocktailDB...")
+    print("Recuperando cocktail da TheCocktailDB...")
     cocktails = []
     
     # Cerca cocktail per ogni lettera (A-Z)
@@ -75,13 +75,13 @@ def fetch_cocktails():
         except Exception as e:
             print(f"  ✗ Errore durante fetch lettera '{letter.upper()}': {e}")
     
-    print(f"\n📊 Totale cocktail recuperati: {len(cocktails)}")
+    print(f"\nTotale cocktail recuperati: {len(cocktails)}")
     return cocktails
 
 
 def insert_cocktails(db, cocktails):
     """Inserisce i cocktail nel database."""
-    print("\n💾 Inserendo cocktail nel database...")
+    print("\nInserendo cocktail nel database...")
     inserted = 0
     skipped = 0
     
@@ -158,8 +158,8 @@ def insert_cocktails(db, cocktails):
             print(f"  ✗ Errore inserimento cocktail '{name}': {e}")
             db.rollback()
     
-    print(f"\n✅ Cocktail inseriti: {inserted}")
-    print(f"⏭️  Cocktail saltati (duplicati): {skipped}")
+    print(f"\nCocktail inseriti: {inserted}")
+    print(f"Cocktail saltati (duplicati): {skipped}")
     return inserted
 
 
@@ -172,7 +172,7 @@ def main():
     cocktails = fetch_cocktails()
     
     if not cocktails:
-        print("❌ Nessun cocktail recuperato!")
+        print("ERRORE: Nessun cocktail recuperato!")
         return
     
     # Connettiti al database
@@ -185,11 +185,11 @@ def main():
         db.close()
         
         print("\n" + "=" * 60)
-        print("  ✅ POPOLO COMPLETATO AVEC SUCCESSO!")
+        print("  POPOLAMENTO COMPLETATO CON SUCCESSO!")
         print("=" * 60)
         
     except Exception as e:
-        print(f"❌ Errore: {e}")
+        print(f"ERRORE: {e}")
         if 'db' in locals():
             db.close()
 
