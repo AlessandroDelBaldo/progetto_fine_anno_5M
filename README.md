@@ -20,7 +20,8 @@ progetto_fine_anno_5M/
 │   ├── templates/              # Template HTML Jinja2
 │   └── static/                 # CSS e immagini
 ├── tools/                      # Script di utilità
-│   └── populate_from_api.py    # Script per popolare il DB da TheCocktailDB
+│   ├── setup_db.py             # Crea le tabelle del database
+│   └── populate_from_api.py    # Popola il DB da TheCocktailDB
 ├── instance/                   # Database SQLite (generato automaticamente)
 ├── run.py                      # Avvio dell'applicazione
 └── requirements.txt            # Dipendenze Python
@@ -36,20 +37,36 @@ progetto_fine_anno_5M/
 | `/cocktails/<id>` | Dettaglio cocktail con ingredienti |
 | `/cocktails/create` | Form per creare un nuovo cocktail |
 
-## Avvio dell'applicazione
+## Come avviare l'applicazione
+
+### 1. Installa le dipendenze
 
 ```bash
-python run.py
+pip install -r requirements.txt
 ```
 
-L'app sarà disponibile su `http://127.0.0.1:5001`.
+### 2. Crea il database
 
-## Popolamento del database
+```bash
+python tools/setup_db.py
+```
 
-Per caricare cocktail reali nel database tramite l'API pubblica **TheCocktailDB**:
+### 3. (Opzionale) Popola il database dall'API
+
+Per importare cocktail reali da TheCocktailDB (richiede connessione internet):
 
 ```bash
 python tools/populate_from_api.py
 ```
 
-> Nota: questo script è separato dall'app. L'applicazione stessa non chiama API esterne durante il normale funzionamento.
+> Questo script è separato dall'app. L'applicazione stessa non chiama API esterne durante il normale funzionamento.
+
+### 4. Avvia il server
+
+```bash
+python run.py
+```
+
+L'applicazione sarà disponibile su [http://127.0.0.1:5001](http://127.0.0.1:5001).
+
+> Per cambiare host o porta, imposta le variabili d'ambiente `FLASK_RUN_HOST` e `FLASK_RUN_PORT` prima di avviare.

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifica {{ cocktail['name'] }} - App Cocktail{% endblock %}
+
+{% block content %}
+    <h1>Modifica cocktail</h1>
+    <p class="muted">Aggiorna i campi e salva le modifiche.</p>
+
+    <form method="post">
+        <label>Nome</label>
+        <input type="text" name="name" value="{{ cocktail['name'] }}" required>
+
+        <div class="form-row">
+            <div class="col-2">
+                <label>Paese</label>
+                <input type="text" name="country" value="{{ cocktail.get('country') or '' }}">
+            </div>
+            <div class="col-2">
+                <label>Regione</label>
+                <input type="text" name="region" value="{{ cocktail.get('region') or '' }}">
+            </div>
+        </div>
+
+        <label>Tempo preparazione (minuti)</label>
+        <input type="number" name="preparation_time_minutes" min="0" value="{{ cocktail.get('preparation_time_minutes') or '' }}">
+
+        <label>Tipo di cocktail</label>
+        <select name="cocktail_type_id">
+            <option value="">-- Seleziona --</option>
+            {% for t in types %}
+            <option value="{{ t['id'] }}" {% if t['id'] == cocktail.get('cocktail_type_id') %}selected{% endif %}>
+                {{ t['name'] }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Istruzioni</label>
+        <textarea name="instructions" rows="6">{{ cocktail.get('instructions') or '' }}</textarea>
+
+        <label>URL immagine</label>
+        <input type="url" name="image_url" value="{{ cocktail.get('image_url') or '' }}" placeholder="https://example.com/image.jpg">
+
+        <h3>Ingredienti</h3>
+        <p class="muted">Modifica o aggiungi ingredienti. Lascia vuoti i campi non usati.</p>
+
+        {% for i in range(6) %}
+        {% set ing = cocktail['ingredients'][i] if i < cocktail['ingredients']|length else None %}
+        <div class="form-row ingredient-row">
+            <div class="col-2">
+                <select name="ingredient_id">
+                    <option value="">-- Seleziona ingrediente --</option>
+                    {% for opt in ingredients %}
+                    <option value="{{ opt['id'] }}" {% if ing and ing['ingredient_id'] == opt['id'] %}selected{% endif %}>
+                        {{ opt['name'] }} ({{ opt['default_unit'] }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="quantity-input">
+                <input type="text" name="quantity" placeholder="Quantità" value="{{ ing['quantity'] if ing else '' }}">
+            </div>
+            <div class="unit-input">
+                <input type="text" name="unit" placeholder="Unità" value="{{ ing['unit'] or ing['default_unit'] if ing else '' }}">
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="margin-top:10px">
+            <button class="btn" type="submit">Salva modifiche</button>
+            <a class="btn secondary" href="{{ url_for('main.cocktail_detail', id=cocktail['id']) }}" style="margin-left:8px">Annulla</a>
+        </div>
+    </form>
+{% endblock %}
